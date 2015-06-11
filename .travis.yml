@@ -1,0 +1,7 @@
+language: ruby
+script: "bundle exec rspec spec"
+notifications:
+  email: false
+rvm:
+  - 2.1.6
+  - 1.9.3

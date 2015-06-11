@@ -27,13 +27,21 @@ module Beaker::PuppetInstallHelper
     when "pe"
       # This will skip hosts that are not supported
       install_pe_on(hosts,{"pe_ver" => version})
+      add_pe_defaults_on(hosts)
+      add_puppet_paths_on(hosts)
     when "foss"
-      foss_opts = {
+      opts = {
         :version        => version,
         :default_action => "gem_install",
       }
 
-      install_puppet_on(hosts, foss_opts)
+      install_puppet_on(hosts, opts)
+      if opts[:version] and not version_is_less(opts[:version], '4.0.0')
+        add_aio_defaults_on(hosts)
+      else
+        add_foss_defaults_on(hosts)
+      end
+      add_puppet_paths_on(hosts)
       Array(hosts).each do |host|
         if fact_on(host,"osfamily") != "windows"
           on host, "mkdir -p #{host["distmoduledir"]}"
@@ -49,6 +57,8 @@ module Beaker::PuppetInstallHelper
     when "agent"
       # This will fail on hosts that are not supported; use foss and specify a 4.x version instead
       install_puppet_agent_on(hosts, {:version => version})
+      add_aio_defaults_on(hosts)
+      add_puppet_paths_on(hosts)
     else
       raise ArgumentError, "Type must be pe, foss, or agent; got #{type.inspect}"
     end
