@@ -2,7 +2,7 @@ require 'beaker'
 
 module Beaker::PuppetInstallHelper
   def run_puppet_install_helper(type_arg=find_install_type,version=ENV["PUPPET_VERSION"])
-    run_puppet_install_helper_on(hosts,type_arg,version)
+    run_puppet_install_helper_on(default,type_arg,version)
   end
 
   # Takes a host(s) object, install type string, and install version string.
@@ -26,9 +26,7 @@ module Beaker::PuppetInstallHelper
     case type
     when "pe"
       # This will skip hosts that are not supported
-      install_pe_on(hosts,{"pe_ver" => version})
-      add_pe_defaults_on(hosts)
-      add_puppet_paths_on(hosts)
+      install_pe_on(Array(hosts),{"pe_ver" => version})
     when "foss"
       opts = {
         :version        => version,
@@ -36,16 +34,18 @@ module Beaker::PuppetInstallHelper
       }
 
       install_puppet_on(hosts, opts)
+      # XXX install_puppet_on() will only add_aio_defaults_on when the nodeset
+      # type == 'aio', but we don't want to depend on that.
       if opts[:version] and not version_is_less(opts[:version], '4.0.0')
         add_aio_defaults_on(hosts)
-      else
-        add_foss_defaults_on(hosts)
+        add_puppet_paths_on(hosts)
       end
-      add_puppet_paths_on(hosts)
       Array(hosts).each do |host|
         if fact_on(host,"osfamily") != "windows"
           on host, "mkdir -p #{host["distmoduledir"]}"
-          on host, "touch #{host["hieraconf"]}"
+          # XXX Maybe this can just be removed? What PE/puppet version needs
+          # it?
+          on host, "touch #{host.puppet["hiera_config"]}"
         end
         if fact_on(host, "operatingsystem") == "Debian"
           on host, "echo 'export PATH=/var/lib/gems/1.8/bin/:${PATH}' >> ~/.bashrc"
@@ -57,6 +57,8 @@ module Beaker::PuppetInstallHelper
     when "agent"
       # This will fail on hosts that are not supported; use foss and specify a 4.x version instead
       install_puppet_agent_on(hosts, {:version => version})
+      # XXX install_puppet_agent_on() will only add_aio_defaults_on when the
+      # nodeset type == 'aio', but we don't want to depend on that.
       add_aio_defaults_on(hosts)
       add_puppet_paths_on(hosts)
     else
