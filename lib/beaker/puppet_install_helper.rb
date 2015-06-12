@@ -2,7 +2,7 @@ require 'beaker'
 
 module Beaker::PuppetInstallHelper
   def run_puppet_install_helper(type_arg=find_install_type,version=ENV["PUPPET_VERSION"])
-    run_puppet_install_helper_on(default,type_arg,version)
+    run_puppet_install_helper_on(hosts,type_arg,version)
   end
 
   # Takes a host(s) object, install type string, and install version string.

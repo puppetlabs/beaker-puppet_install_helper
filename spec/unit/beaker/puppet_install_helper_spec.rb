@@ -28,12 +28,12 @@ describe 'beaker::puppet_install_helper' do
       allow(subject).to receive(:default).and_return(hosts[0])
     end
     it 'calls run_puppet_install_helper_on on each host' do
-      expect(subject).to receive(:run_puppet_install_helper_on).with(hosts[0],"foss",nil)
+      expect(subject).to receive(:run_puppet_install_helper_on).with(hosts,"foss",nil)
       subject.run_puppet_install_helper
     end
     it 'calls run_puppet_install_helper_on on each host with a version ' do
       ENV["PUPPET_VERSION"] = "4.1.0"
-      expect(subject).to receive(:run_puppet_install_helper_on).with(hosts[0],"foss","4.1.0")
+      expect(subject).to receive(:run_puppet_install_helper_on).with(hosts,"foss","4.1.0")
       subject.run_puppet_install_helper
     end
   end
