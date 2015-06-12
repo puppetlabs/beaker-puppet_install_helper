@@ -26,12 +26,12 @@ module Beaker::PuppetInstallHelper
     case type
     when "pe"
       # This will skip hosts that are not supported
-      install_pe_on(Array(hosts),{"pe_ver" => version})
+      install_pe_on(Array(hosts),options.merge({"pe_ver" => version}))
     when "foss"
-      opts = {
+      opts = options.merge({
         :version        => version,
         :default_action => "gem_install",
-      }
+      })
 
       install_puppet_on(hosts, opts)
       # XXX install_puppet_on() will only add_aio_defaults_on when the nodeset
@@ -56,7 +56,7 @@ module Beaker::PuppetInstallHelper
       end
     when "agent"
       # This will fail on hosts that are not supported; use foss and specify a 4.x version instead
-      install_puppet_agent_on(hosts, {:version => version})
+      install_puppet_agent_on(hosts,options.merge({:version => version}))
       # XXX install_puppet_agent_on() will only add_aio_defaults_on when the
       # nodeset type == 'aio', but we don't want to depend on that.
       add_aio_defaults_on(hosts)

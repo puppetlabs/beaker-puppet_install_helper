@@ -14,6 +14,7 @@ describe 'beaker::puppet_install_helper' do
     [foss_host, pe_host]
   end
   before :each do
+    allow(subject).to receive(:options).and_return({})
     allow(subject).to receive(:on)
     allow(subject).to receive(:fact_on)
   end
