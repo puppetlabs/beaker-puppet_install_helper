@@ -8,8 +8,10 @@ describe 'beaker::puppet_install_helper' do
     foss_host = double(:is_pe? => false)
     pe_host = double(:is_pe? => true)
     allow(foss_host).to receive(:[]).with("distmoduledir").and_return("/dne")
+    allow(foss_host).to receive(:[]).with("platform").and_return("Debian")
     allow(foss_host).to receive(:puppet).and_return({"hiera_config" => "/dne"})
     allow(pe_host).to receive(:[]).with("distmoduledir").and_return("/dne")
+    allow(pe_host).to receive(:[]).with("platform").and_return("Debian")
     allow(pe_host).to receive(:puppet).and_return({"hiera_config" => "/dne"})
     [foss_host, pe_host]
   end
@@ -43,6 +45,13 @@ describe 'beaker::puppet_install_helper' do
         expect(subject).to receive(:default).and_return(hosts[0])
         expect(subject).to receive(:install_puppet_on).with(hosts,{:version => nil,:default_action => "gem_install"})
         subject.run_puppet_install_helper_on(hosts)
+      end
+      it "windows 2003 node" do
+        w2k3 = {"platform" => 'windows-2003r2-64', 'distmoduledir' => '/dne','hieraconf' => '/dne'}
+        win_hosts = [ w2k3 ]
+        expect(subject).to receive(:default).and_return(double(:is_pe? => true))
+        expect(subject).to receive(:install_pe_on).with([w2k3.merge({'install_32' => true})], {"pe_ver" => nil})
+        subject.run_puppet_install_helper_on(win_hosts)
       end
       it "uses PE by default for PE nodes" do
         expect(subject).to receive(:default).and_return(hosts[1])

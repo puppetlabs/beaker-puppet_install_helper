@@ -23,6 +23,13 @@ module Beaker::PuppetInstallHelper
     # PUPPET_INSTALL_TYPE=foss
     # PUPPET_INSTALL_TYPE=agent
 
+    # Ensure windows 2003 is always set to 32 bit
+    Array(hosts).each do |host|
+      if host["platform"] =~ /windows-2003/i
+        host["install_32"] = true
+      end
+    end
+
     case type
     when "pe"
       # This will skip hosts that are not supported
