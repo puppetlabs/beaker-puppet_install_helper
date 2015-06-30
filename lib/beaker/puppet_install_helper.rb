@@ -9,10 +9,21 @@ module Beaker::PuppetInstallHelper
   # - Type defaults to PE for PE nodes, and foss otherwise.
   # - Version will default to the latest 3x foss/pe package, depending on type
   def run_puppet_install_helper_on(hosts,type_arg=find_install_type,version=ENV["PUPPET_VERSION"])
-    # Short circuit based on rspec-system and beaker variables
-    return if ENV["RS_PROVISION"] == "no" or ENV["BEAKER_provision"] == "no"
 
     type = type_arg || find_install_type
+
+    # Short circuit based on rspec-system and beaker variables
+    if ENV["RS_PROVISION"] == "no" or ENV["BEAKER_provision"] == "no"
+      Array(hosts).each do |host|
+        case type
+        when "pe"
+          configure_pe_defaults_on(host)
+        when /foss|agent/
+          configure_foss_defaults_on(host)
+        end
+      end
+      return
+    end
 
     # Example environment variables to be read:
     # PUPPET_VERSION=3.8.1 <-- for foss/pe/gem
