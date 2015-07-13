@@ -13,5 +13,9 @@ The way to use this is to declare either `run_puppet_install_helper()` or `run_p
 
 The best way is explicitly set `PUPPET_INSTALL_TYPE` and `PUPPET_VERSION` to what you want. It'll probably do what you expect.
 
+### Support
+
+No support is supplied or implied. Use at your own risk.
+
 ### TODO
 - Add support for ci-ready builds
