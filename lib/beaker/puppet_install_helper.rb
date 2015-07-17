@@ -1,4 +1,5 @@
 require 'beaker'
+require 'beaker/ca_cert_helper'
 
 module Beaker::PuppetInstallHelper
   def run_puppet_install_helper(type_arg=find_install_type,version=ENV["PUPPET_VERSION"])
