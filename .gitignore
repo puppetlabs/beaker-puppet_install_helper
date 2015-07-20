@@ -1,3 +1,5 @@
 Gemfile.lock
+Gemfile.local
 .bundle
 *.swp
+.idea
