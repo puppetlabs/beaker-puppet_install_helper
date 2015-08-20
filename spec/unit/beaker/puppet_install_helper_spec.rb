@@ -22,6 +22,7 @@ describe 'beaker::puppet_install_helper' do
   end
   after :each do
     ENV.delete("PUPPET_VERSION")
+    ENV.delete("PUPPET_INSTALL_VERSION")
     ENV.delete("PUPPET_INSTALL_TYPE")
   end
   describe '#run_puppet_install_helper' do
@@ -33,10 +34,12 @@ describe 'beaker::puppet_install_helper' do
       expect(subject).to receive(:run_puppet_install_helper_on).with(hosts,"foss",nil)
       subject.run_puppet_install_helper
     end
-    it 'calls run_puppet_install_helper_on on each host with a version ' do
-      ENV["PUPPET_VERSION"] = "4.1.0"
-      expect(subject).to receive(:run_puppet_install_helper_on).with(hosts,"foss","4.1.0")
-      subject.run_puppet_install_helper
+    ["PUPPET_VERSION","PUPPET_INSTALL_VERSION"].each do |version_var| 
+      it 'calls run_puppet_install_helper_on on each host with a version ' do
+        ENV[version_var] = "4.1.0"
+        expect(subject).to receive(:run_puppet_install_helper_on).with(hosts,"foss","4.1.0")
+        subject.run_puppet_install_helper
+      end
     end
   end
   describe '#run_puppet_install_helper_on' do
@@ -65,19 +68,21 @@ describe 'beaker::puppet_install_helper' do
         expect(subject).to receive(:install_puppet_on).with(hosts,{:version => nil,:default_action => "gem_install"})
         subject.run_puppet_install_helper_on(hosts)
       end
-      it "uses foss with a version" do
-        ENV["PUPPET_INSTALL_TYPE"] = "foss"
-        ENV["PUPPET_VERSION"] = "3.8.1"
-        expect(subject).to receive(:install_puppet_on).with(hosts,{:version => "3.8.1",:default_action => "gem_install"})
-        subject.run_puppet_install_helper_on(hosts)
-      end
-      it "uses foss with a >4 version detects AIO" do
-        ENV["PUPPET_INSTALL_TYPE"] = "foss"
-        ENV["PUPPET_VERSION"] = "4.1.0"
-        expect(subject).to receive(:install_puppet_on).with(hosts,{:version => "4.1.0",:default_action => "gem_install"})
-        expect(subject).to receive(:add_aio_defaults_on).with(hosts)
-        expect(subject).to receive(:add_puppet_paths_on).with(hosts)
-        subject.run_puppet_install_helper_on(hosts)
+      ["PUPPET_VERSION","PUPPET_INSTALL_VERSION"].each do |version_var| 
+        it "uses foss with a version" do
+          ENV["PUPPET_INSTALL_TYPE"] = "foss"
+          ENV[version_var] = "3.8.1"
+          expect(subject).to receive(:install_puppet_on).with(hosts,{:version => "3.8.1",:default_action => "gem_install"})
+          subject.run_puppet_install_helper_on(hosts)
+        end
+        it "uses foss with a >4 version detects AIO" do
+          ENV["PUPPET_INSTALL_TYPE"] = "foss"
+          ENV[version_var] = "4.1.0"
+          expect(subject).to receive(:install_puppet_on).with(hosts,{:version => "4.1.0",:default_action => "gem_install"})
+          expect(subject).to receive(:add_aio_defaults_on).with(hosts)
+          expect(subject).to receive(:add_puppet_paths_on).with(hosts)
+          subject.run_puppet_install_helper_on(hosts)
+        end
       end
     end
     context "for PE" do
@@ -88,7 +93,7 @@ describe 'beaker::puppet_install_helper' do
       end
       it "uses PE with a version" do
         ENV["PUPPET_INSTALL_TYPE"] = "pe"
-        ENV["PUPPET_VERSION"] = "3.8.1"
+        ENV["PUPPET_INSTALL_VERSION"] = "3.8.1"
         expect(subject).to receive(:install_pe_on).with(hosts,{"pe_ver" => "3.8.1"})
         subject.run_puppet_install_helper_on(hosts)
       end
@@ -103,7 +108,7 @@ describe 'beaker::puppet_install_helper' do
       end
       it "uses foss with a version" do
         ENV["PUPPET_INSTALL_TYPE"] = "agent"
-        ENV["PUPPET_VERSION"] = "1.1.0"
+        ENV["PUPPET_INSTALL_VERSION"] = "1.1.0"
         expect(subject).to receive(:install_puppet_agent_on).with(hosts,{:version => "1.1.0"})
         expect(subject).to receive(:add_aio_defaults_on).with(hosts)
         expect(subject).to receive(:add_puppet_paths_on).with(hosts)
