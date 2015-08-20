@@ -2,14 +2,14 @@ require 'beaker'
 require 'beaker/ca_cert_helper'
 
 module Beaker::PuppetInstallHelper
-  def run_puppet_install_helper(type_arg=find_install_type,version=ENV["PUPPET_VERSION"])
+  def run_puppet_install_helper(type_arg=find_install_type,version=find_install_version)
     run_puppet_install_helper_on(hosts,type_arg,version)
   end
 
   # Takes a host(s) object, install type string, and install version string.
   # - Type defaults to PE for PE nodes, and foss otherwise.
   # - Version will default to the latest 3x foss/pe package, depending on type
-  def run_puppet_install_helper_on(hosts,type_arg=find_install_type,version=ENV["PUPPET_VERSION"])
+  def run_puppet_install_helper_on(hosts,type_arg=find_install_type,version=find_install_version)
 
     type = type_arg || find_install_type
 
@@ -27,9 +27,9 @@ module Beaker::PuppetInstallHelper
     end
 
     # Example environment variables to be read:
-    # PUPPET_VERSION=3.8.1 <-- for foss/pe/gem
-    # PUPPET_VERSION=4.1.0 <-- for agent/gem
-    # PUPPET_VERSION=1.0.1 <-- for agent
+    # PUPPET_INSTALL_VERSION=3.8.1 <-- for foss/pe/gem
+    # PUPPET_INSTALL_VERSION=4.1.0 <-- for agent/gem
+    # PUPPET_INSTALL_VERSION=1.0.1 <-- for agent
     #
     # PUPPET_INSTALL_TYPE=pe
     # PUPPET_INSTALL_TYPE=foss
@@ -92,6 +92,16 @@ module Beaker::PuppetInstallHelper
       "pe"
     else
       "foss"
+    end
+  end
+
+  def find_install_version
+    if type = ENV["PUPPET_INSTALL_VERSION"]
+      type
+    elsif type = ENV["PUPPET_VERSION"]
+      type
+    else
+      nil
     end
   end
 end
