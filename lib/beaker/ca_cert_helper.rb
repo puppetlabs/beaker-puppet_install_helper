@@ -15,11 +15,13 @@ module Beaker::CaCertHelper
   #
   ##
   def install_ca_certs_on(hosts)
-    Array[hosts].each do |host|
+    [hosts].flatten.each do |host|
       get_cert_hash.each do |cert_name, ca|
         create_cert_on_host(host, cert_name, ca)
         if host['platform'] =~ /windows/i
           add_windows_cert host, cert_name
+        elsif host['platform'] =~ /solaris/i
+          add_solaris_cert host, cert_name
         end
       end
     end
@@ -38,6 +40,14 @@ module Beaker::CaCertHelper
   ##
   def add_windows_cert(host, ca_filename)
     on host, "cmd /c certutil -v -addstore Root `cygpath -w #{ca_filename}`"
+  end
+
+  ##
+  # Install cert, assumes cygwin currently
+  ##
+  def add_solaris_cert(host, ca_filename)
+    on host, "echo '# #{ca_filename}' >> /opt/puppet/ssl/cert.pem"
+    on host, "cat #{ca_filename} >> /opt/puppet/ssl/cert.pem"
   end
 
   ##
