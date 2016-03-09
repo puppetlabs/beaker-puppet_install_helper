@@ -20,8 +20,9 @@ module Beaker::CaCertHelper
         create_cert_on_host(host, cert_name, ca)
         if host['platform'] =~ /windows/i
           add_windows_cert host, cert_name
-        elsif host['platform'] =~ /solaris/i
-          add_solaris_cert host, cert_name
+        # No longer needed, apparently.
+        #elsif host['platform'] =~ /solaris/i
+        #  add_solaris_cert host, cert_name
         end
       end
     end
