@@ -2,7 +2,10 @@ require 'spec_helper'
 
 describe 'beaker::ca_cert_helper' do
   let :subject do
-    Class.new { include Beaker::CaCertHelper }
+    Class.new do
+      include Beaker::PuppetInstallHelper
+      include Beaker::CaCertHelper
+    end
   end
 
 
@@ -23,15 +26,15 @@ describe 'beaker::ca_cert_helper' do
       subject.install_ca_certs_on w2k3
     end
 
-    #it "solaris 11 node" do
-    #  sol = {"platform" => 'solaris-11-x86_64', 'distmoduledir' => '/dne', 'hieraconf' => '/dne'}
+    it "solaris 11 node" do
+      sol = {"platform" => 'solaris-11-x86_64', 'distmoduledir' => '/dne', 'hieraconf' => '/dne'}
 
-    #  expect(subject).to receive(:add_solaris_cert).with(sol, 'geotrustglobal.pem')
-    #  expect(subject).to receive(:create_cert_on_host).with(sol, 'geotrustglobal.pem', 'my cert string')
-    #  expect(subject).to receive(:add_solaris_cert).with(sol, 'usertrust-network.pem')
-    #  expect(subject).to receive(:create_cert_on_host).with(sol, 'usertrust-network.pem', 'my user trust cert')
-    #  subject.install_ca_certs_on sol
-    #end
+      expect(subject).to receive(:add_solaris_cert).with(sol, 'geotrustglobal.pem')
+      expect(subject).to receive(:create_cert_on_host).with(sol, 'geotrustglobal.pem', 'my cert string')
+      expect(subject).to receive(:add_solaris_cert).with(sol, 'usertrust-network.pem')
+      expect(subject).to receive(:create_cert_on_host).with(sol, 'usertrust-network.pem', 'my user trust cert')
+      subject.install_ca_certs_on sol
+    end
   end
 
   describe 'add_windows_cert' do
@@ -42,14 +45,14 @@ describe 'beaker::ca_cert_helper' do
     }
   end
 
-  #describe 'add_solaris_cert' do
-  #  it {
-  #    host = {"platform" => 'solaris-11-x86_64', 'distmoduledir' => '/dne', 'hieraconf' => '/dne'}
-  #    expect(subject).to receive(:on).with(host, 'echo \'# geotrustglobal.pem\' >> /opt/puppet/ssl/cert.pem')
-  #    expect(subject).to receive(:on).with(host, 'cat geotrustglobal.pem >> /opt/puppet/ssl/cert.pem')
-  #    subject.add_solaris_cert host, 'geotrustglobal.pem'
-  #  }
-  #end
+  describe 'add_solaris_cert' do
+    it {
+      host = {"platform" => 'solaris-11-x86_64', 'distmoduledir' => '/dne', 'hieraconf' => '/dne'}
+      expect(subject).to receive(:on).with(host, 'echo \'# geotrustglobal.pem\' >> /opt/puppet/ssl/cert.pem')
+      expect(subject).to receive(:on).with(host, 'cat geotrustglobal.pem >> /opt/puppet/ssl/cert.pem')
+      subject.add_solaris_cert host, 'geotrustglobal.pem'
+    }
+  end
 
   describe 'get_cert_hash' do
     it 'should contain 3 certs' do

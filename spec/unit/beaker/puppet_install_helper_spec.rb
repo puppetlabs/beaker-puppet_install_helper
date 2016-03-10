@@ -97,6 +97,16 @@ describe 'beaker::puppet_install_helper' do
         expect(subject).to receive(:install_pe_on).with(hosts,{"pe_ver" => "3.8.1"})
         subject.run_puppet_install_helper_on(hosts)
       end
+      it "installs certs on PE 3 solaris" do
+        sol = {"platform" => 'solaris-11-64', 'distmoduledir' => '/dne','hieraconf' => '/dne'}
+        hosts = [ sol ]
+        ENV["PUPPET_INSTALL_TYPE"] = "pe"
+        ENV["PUPPET_INSTALL_VERSION"] = "3.8.1"
+        expect(subject).to receive(:install_pe_on).with(hosts,{"pe_ver" => "3.8.1"})
+        expect(subject).to receive(:create_cert_on_host).exactly(3).times
+        expect(subject).to receive(:add_solaris_cert).exactly(3).times
+        subject.run_puppet_install_helper_on(hosts)
+      end
     end
     context "for puppet-agent" do
       it "uses agent explicitly" do
