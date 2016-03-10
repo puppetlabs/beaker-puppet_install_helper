@@ -1,7 +1,10 @@
 require 'beaker'
-require 'beaker/dsl/helpers/host_helpers'
+require 'beaker/dsl/patterns'
+require 'beaker/dsl/helpers'
 
 module Beaker::CaCertHelper
+  include Beaker::DSL::Helpers
+  include Beaker::DSL::Patterns
 
   def install_ca_certs
     install_ca_certs_on(hosts)
@@ -17,12 +20,12 @@ module Beaker::CaCertHelper
   def install_ca_certs_on(hosts)
     [hosts].flatten.each do |host|
       get_cert_hash.each do |cert_name, ca|
-        create_cert_on_host(host, cert_name, ca)
         if host['platform'] =~ /windows/i
+          create_cert_on_host(host, cert_name, ca)
           add_windows_cert host, cert_name
-        # No longer needed, apparently.
-        #elsif host['platform'] =~ /solaris/i
-        #  add_solaris_cert host, cert_name
+        elsif host['platform'] =~ /solaris/i
+          create_cert_on_host(host, cert_name, ca)
+          add_solaris_cert host, cert_name
         end
       end
     end
