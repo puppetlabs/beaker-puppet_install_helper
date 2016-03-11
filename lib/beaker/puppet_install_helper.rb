@@ -44,11 +44,9 @@ module Beaker::PuppetInstallHelper
 
     case type
     when "pe"
-      # This will skip hosts that are not supported
+      # These will skip hosts that are not supported
       install_pe_on(Array(hosts),options.merge({"pe_ver" => version}))
-      if version and version_is_less(version, '4.0.0')
-        install_ca_certs_on(Array(hosts))
-      end
+      install_ca_certs_on(Array(hosts))
     when "foss"
       opts = options.merge({
         :version        => version,

@@ -17,7 +17,7 @@ describe 'beaker::ca_cert_helper' do
     end
 
     it "windows 2003 node" do
-      w2k3 = {"platform" => 'windows-2003r2-64', 'distmoduledir' => '/dne', 'hieraconf' => '/dne'}
+      w2k3 = {"pe_ver" => "3.8.3", "platform" => 'windows-2003r2-64', 'distmoduledir' => '/dne', 'hieraconf' => '/dne'}
 
       expect(subject).to receive(:add_windows_cert).with(w2k3, 'geotrustglobal.pem')
       expect(subject).to receive(:create_cert_on_host).with(w2k3, 'geotrustglobal.pem', 'my cert string')
@@ -27,7 +27,7 @@ describe 'beaker::ca_cert_helper' do
     end
 
     it "solaris 11 node" do
-      sol = {"platform" => 'solaris-11-x86_64', 'distmoduledir' => '/dne', 'hieraconf' => '/dne'}
+      sol = {"pe_ver" => "3.8.3", "platform" => 'solaris-11-x86_64', 'distmoduledir' => '/dne', 'hieraconf' => '/dne'}
 
       expect(subject).to receive(:add_solaris_cert).with(sol, 'geotrustglobal.pem')
       expect(subject).to receive(:create_cert_on_host).with(sol, 'geotrustglobal.pem', 'my cert string')
