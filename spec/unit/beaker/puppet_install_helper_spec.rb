@@ -9,7 +9,9 @@ describe 'beaker::puppet_install_helper' do
     pe_host = double(:is_pe? => true)
     allow(foss_host).to receive(:[]).with("distmoduledir").and_return("/dne")
     allow(foss_host).to receive(:[]).with("platform").and_return("Debian")
+    allow(foss_host).to receive(:[]).with("pe_ver").and_return(nil)
     allow(foss_host).to receive(:puppet).and_return({"hiera_config" => "/dne"})
+    allow(pe_host).to receive(:[]).with("pe_ver").and_return("3.8.3")
     allow(pe_host).to receive(:[]).with("distmoduledir").and_return("/dne")
     allow(pe_host).to receive(:[]).with("platform").and_return("Debian")
     allow(pe_host).to receive(:puppet).and_return({"hiera_config" => "/dne"})
@@ -98,7 +100,7 @@ describe 'beaker::puppet_install_helper' do
         subject.run_puppet_install_helper_on(hosts)
       end
       it "installs certs on PE 3 solaris" do
-        sol = {"platform" => 'solaris-11-64', 'distmoduledir' => '/dne','hieraconf' => '/dne'}
+        sol = {"pe_ver" => "3.8.3", "platform" => 'solaris-11-64', 'distmoduledir' => '/dne','hieraconf' => '/dne'}
         hosts = [ sol ]
         ENV["PUPPET_INSTALL_TYPE"] = "pe"
         ENV["PUPPET_INSTALL_VERSION"] = "3.8.1"
