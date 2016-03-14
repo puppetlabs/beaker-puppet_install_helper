@@ -56,6 +56,8 @@ describe 'beaker::puppet_install_helper' do
         win_hosts = [ w2k3 ]
         expect(subject).to receive(:default).and_return(double(:is_pe? => true))
         expect(subject).to receive(:install_pe_on).with([w2k3.merge({'install_32' => true})], {"pe_ver" => nil})
+        expect(subject).to receive(:create_cert_on_host).exactly(3).times
+        expect(subject).to receive(:add_windows_cert).exactly(3).times
         subject.run_puppet_install_helper_on(win_hosts)
       end
       it "uses PE by default for PE nodes" do

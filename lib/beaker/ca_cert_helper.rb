@@ -19,15 +19,13 @@ module Beaker::CaCertHelper
   ##
   def install_ca_certs_on(hosts)
     [hosts].flatten.each do |host|
-      if host['pe_ver'] and version_is_less(host['pe_ver'], '4.0.0')
-        get_cert_hash.each do |cert_name, ca|
-          if host['platform'] =~ /windows/i
-            create_cert_on_host(host, cert_name, ca)
-            add_windows_cert host, cert_name
-          elsif host['platform'] =~ /solaris/i
-            create_cert_on_host(host, cert_name, ca)
-            add_solaris_cert host, cert_name
-          end
+      get_cert_hash.each do |cert_name, ca|
+        if host['platform'] =~ /windows/i
+          create_cert_on_host(host, cert_name, ca)
+          add_windows_cert host, cert_name
+        elsif host['platform'] =~ /solaris/i and host['pe_ver'] and version_is_less(host['pe_ver'], '4.0.0')
+          create_cert_on_host(host, cert_name, ca)
+          add_solaris_cert host, cert_name
         end
       end
     end
