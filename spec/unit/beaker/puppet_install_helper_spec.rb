@@ -26,6 +26,8 @@ describe 'beaker::puppet_install_helper' do
     ENV.delete("PUPPET_VERSION")
     ENV.delete("PUPPET_INSTALL_VERSION")
     ENV.delete("PUPPET_INSTALL_TYPE")
+    ENV.delete("PUPPET_AGENT_SHA")
+    ENV.delete("PUPPET_AGENT_SUITE_VERSION")
   end
   describe '#run_puppet_install_helper' do
     before :each do
@@ -124,6 +126,25 @@ describe 'beaker::puppet_install_helper' do
         ENV["PUPPET_INSTALL_TYPE"] = "agent"
         ENV["PUPPET_INSTALL_VERSION"] = "1.1.0"
         expect(subject).to receive(:install_puppet_agent_on).with(hosts,{:version => "1.1.0"})
+        expect(subject).to receive(:add_aio_defaults_on).with(hosts)
+        expect(subject).to receive(:add_puppet_paths_on).with(hosts)
+        subject.run_puppet_install_helper_on(hosts)
+      end
+    end
+    context "for puppet-agent development repo" do
+      before :each do
+        ENV["PUPPET_INSTALL_TYPE"] = "agent"
+        ENV["PUPPET_AGENT_SHA"] = 'abc123'
+      end
+      it "uses a development repo" do
+        expect(subject).to receive(:install_puppet_agent_dev_repo_on).with(hosts,{:puppet_collection=>"PC1", :puppet_agent_sha=>"abc123", :puppet_agent_version=>"abc123"})
+        expect(subject).to receive(:add_aio_defaults_on).with(hosts)
+        expect(subject).to receive(:add_puppet_paths_on).with(hosts)
+        subject.run_puppet_install_helper_on(hosts)
+      end
+      it "uses a development repo with suite version" do
+        ENV["PUPPET_AGENT_SUITE_VERSION"] = '1.0.0.0.gabc123'
+        expect(subject).to receive(:install_puppet_agent_dev_repo_on).with(hosts,{:puppet_collection=>"PC1", :puppet_agent_sha=>"abc123", :puppet_agent_version=>"1.0.0.0.gabc123"})
         expect(subject).to receive(:add_aio_defaults_on).with(hosts)
         expect(subject).to receive(:add_puppet_paths_on).with(hosts)
         subject.run_puppet_install_helper_on(hosts)
