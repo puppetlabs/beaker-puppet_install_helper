@@ -35,6 +35,10 @@ module Beaker::PuppetInstallHelper
     # PUPPET_INSTALL_TYPE=foss
     # PUPPET_INSTALL_TYPE=agent
 
+    # For PUPPET_INSTALL_TYPE=agent and using a development version of Puppet Agent
+    # PUPPET_AGENT_SHA=18d31fd5ed41abb276398201f84a4347e0fc7092   <-- Required.  Long form commit SHA used to build the Puppet Agent
+    # PUPPET_AGENT_SUITE_VERSION=1.8.2.350.g18d31fd               <-- Optiona. Version string for the Puppet Agent
+
     # Ensure windows 2003 is always set to 32 bit
     Array(hosts).each do |host|
       if host["platform"] =~ /windows-2003/i
@@ -75,8 +79,18 @@ module Beaker::PuppetInstallHelper
         end
       end
     when "agent"
-      # This will fail on hosts that are not supported; use foss and specify a 4.x version instead
-      install_puppet_agent_on(hosts,options.merge({:version => version}))
+      if ENV['PUPPET_AGENT_SHA'].nil?
+        # This will fail on hosts that are not supported; use foss and specify a 4.x version instead
+        install_puppet_agent_on(hosts,options.merge({:version => version}))
+      else
+        opts = options.merge({
+          :puppet_collection    => 'PC1',
+          :puppet_agent_sha     => ENV['PUPPET_AGENT_SHA'],
+          :puppet_agent_version => ENV['PUPPET_AGENT_SUITE_VERSION'] || ENV['PUPPET_AGENT_SHA']
+        })
+        install_puppet_agent_dev_repo_on(hosts, opts)
+      end
+
       # XXX install_puppet_agent_on() will only add_aio_defaults_on when the
       # nodeset type == 'aio', but we don't want to depend on that.
       add_aio_defaults_on(hosts)

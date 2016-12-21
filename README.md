@@ -15,6 +15,13 @@ The way to use this is to declare either `run_puppet_install_helper()` or `run_p
 
 The best way is explicitly set `PUPPET_INSTALL_TYPE` and `PUPPET_INSTALL_VERSION` to what you want. It'll probably do what you expect.
 
+#### Installing a puppet-agent package from a development repository
+
+In order to use a custom, or unreleased, puppet-agent package set the following environment variables"
+- `PUPPET_INSTALL_TYPE=agent`
+- `PUPPET_AGENT_SHA` is the longform commit SHA used when building the puppet-agent package, for example `PUPPET_AGENT_SHA=18d31fd5ed41abb276398201f84a4347e0fc7092`.  This is required to be set in order to use a development puppet-agent package
+- `PUPPET_AGENT_SUITE_VERSION` is the version of the puppet-agent package, for example `PUPPET_AGENT_SUITE_VERSION="1.8.2.350.g18d31fd`.  This is optional, and will default to `PUPPET_AGENT_SHA` if not set
+
 ### `install_ca_certs`
 
 Install Certificate Authority Certs on Windows and OSX for Geotrust, User Trust Network, and Equifax
