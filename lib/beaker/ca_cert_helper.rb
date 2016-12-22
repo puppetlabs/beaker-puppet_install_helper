@@ -10,7 +10,6 @@ module Beaker::CaCertHelper
     install_ca_certs_on(hosts)
   end
 
-
   ##
   # Install certs on Windows and OSX Hosts
   #
@@ -23,7 +22,7 @@ module Beaker::CaCertHelper
         if host['platform'] =~ /windows/i
           create_cert_on_host(host, cert_name, ca)
           add_windows_cert host, cert_name
-        elsif host['platform'] =~ /solaris/i and host['pe_ver'] and version_is_less(host['pe_ver'], '4.0.0')
+        elsif host['platform'] =~ /solaris/i && host['pe_ver'] && version_is_less(host['pe_ver'], '4.0.0')
           create_cert_on_host(host, cert_name, ca)
           add_solaris_cert host, cert_name
         end
@@ -136,8 +135,6 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
 
     certs
   end
-
-
 end
 
 include Beaker::CaCertHelper

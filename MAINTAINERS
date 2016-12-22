@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "file_format": "This MAINTAINERS file format is described at http://pup.pt/maintainers",
+  "issues": "https://github.com/puppetlabs/beaker-puppet_install_helper/issues",
+  "people": [
+    {
+      "github": "hunner",
+      "name": "Hunter Haugen"
+    },
+    {
+      "github": "DavidS",
+      "name": "David Schmitt"
+    }
+  ]
+}
