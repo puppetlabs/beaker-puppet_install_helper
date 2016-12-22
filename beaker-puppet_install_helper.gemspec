@@ -1,11 +1,11 @@
 Gem::Specification.new do |s|
   s.name        = 'beaker-puppet_install_helper'
-  s.version     = '0.4.4'
+  s.version     = '0.5.0'
   s.authors     = ['Puppetlabs']
-  s.email       = ['hunter@puppetlabs.com']
+  s.email       = ['hunter@puppet.com']
   s.homepage    = 'https://github.com/puppetlabs/beaker-puppet_install_helper'
   s.summary     = 'Puppet install helper for Beaker'
-  s.description = 'Puppet install helper for Beaker, see https://github.com/puppetlabs/beaker'
+  s.description = 'Provides a unified external interface to choosing which version of puppet to install on the systems under test. For details on Beaker, see https://github.com/puppetlabs/beaker'
   s.license     = 'Apache-2'
 
   s.files         = `git ls-files`.split("\n")
