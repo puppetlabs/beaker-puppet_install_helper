@@ -1,4 +1,4 @@
-source ENV['GEM_SOURCE'] || "https://rubygems.org"
+source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
 gemspec
 
@@ -17,7 +17,4 @@ group :development do
   gem 'pry-byebug'
 end
 
-if File.exists? "#{__FILE__}.local"
-  eval(File.read("#{__FILE__}.local"), binding)
-end
-
+eval(File.read("#{__FILE__}.local"), binding) if File.exist? "#{__FILE__}.local"
