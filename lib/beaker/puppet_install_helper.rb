@@ -94,21 +94,15 @@ module Beaker::PuppetInstallHelper
   end
 
   def find_install_type
-    if type = ENV['PUPPET_INSTALL_TYPE']
-      type
-    elsif default.is_pe?
-      'pe'
-    else
-      'foss'
-    end
+    ENV['PUPPET_INSTALL_TYPE'] || if default.is_pe?
+                                    'pe'
+                                  else
+                                    'foss'
+                                  end
   end
 
   def find_install_version
-    if type = ENV['PUPPET_INSTALL_VERSION']
-      type
-    elsif type = ENV['PUPPET_VERSION']
-      type
-    end
+    ENV['PUPPET_INSTALL_VERSION'] || ENV['PUPPET_VERSION']
   end
 end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'beaker::puppet_install_helper' do
+describe 'Beaker::PuppetInstallHelper' do
   let :subject do
     Class.new { include Beaker::PuppetInstallHelper }
   end
