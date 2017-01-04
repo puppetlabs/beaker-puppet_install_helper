@@ -97,7 +97,7 @@ module Beaker::PuppetInstallHelper
     ENV['PUPPET_INSTALL_TYPE'] || if default.is_pe?
                                     'pe'
                                   else
-                                    'foss'
+                                    'agent'
                                   end
   end
 

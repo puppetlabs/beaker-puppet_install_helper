@@ -35,22 +35,24 @@ describe 'Beaker::PuppetInstallHelper' do
       allow(subject).to receive(:default).and_return(hosts[0])
     end
     it 'calls run_puppet_install_helper_on on each host' do
-      expect(subject).to receive(:run_puppet_install_helper_on).with(hosts, 'foss', nil)
+      expect(subject).to receive(:run_puppet_install_helper_on).with(hosts, 'agent', nil)
       subject.run_puppet_install_helper
     end
     %w(PUPPET_VERSION PUPPET_INSTALL_VERSION).each do |version_var|
       it 'calls run_puppet_install_helper_on on each host with a version ' do
         ENV[version_var] = '4.1.0'
-        expect(subject).to receive(:run_puppet_install_helper_on).with(hosts, 'foss', '4.1.0')
+        expect(subject).to receive(:run_puppet_install_helper_on).with(hosts, 'agent', '4.1.0')
         subject.run_puppet_install_helper
       end
     end
   end
   describe '#run_puppet_install_helper_on' do
     context 'for default' do
-      it 'uses foss by default for non-pe nodes' do
+      it 'uses agent by default for non-pe nodes' do
         expect(subject).to receive(:default).and_return(hosts[0])
-        expect(subject).to receive(:install_puppet_on).with(hosts, version: nil, default_action: 'gem_install')
+        expect(subject).to receive(:add_aio_defaults_on).with(hosts)
+        expect(subject).to receive(:add_puppet_paths_on).with(hosts)
+        expect(subject).to receive(:install_puppet_agent_on).with(hosts, version: nil)
         subject.run_puppet_install_helper_on(hosts)
       end
       it 'windows 2003 node' do
