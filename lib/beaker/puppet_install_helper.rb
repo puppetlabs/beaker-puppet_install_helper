@@ -88,6 +88,12 @@ module Beaker::PuppetInstallHelper
       # nodeset type == 'aio', but we don't want to depend on that.
       add_aio_defaults_on(hosts)
       add_puppet_paths_on(hosts)
+      # beaker does not add the puppet bin folder to $PATH. this adds it for puppet 4
+      Array(hosts).each do |host|
+        if fact_on(host, 'osfamily') != 'windows'
+          on host, "echo 'export PATH=/opt/puppetlabs/puppet/bin:${PATH}' >> /root/.bashrc"
+        end
+      end
     else
       raise ArgumentError, "Type must be pe, foss, or agent; got #{type.inspect}"
     end
