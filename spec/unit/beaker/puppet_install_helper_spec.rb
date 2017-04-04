@@ -10,10 +10,12 @@ describe 'Beaker::PuppetInstallHelper' do
     allow(foss_host).to receive(:[]).with('distmoduledir').and_return('/dne')
     allow(foss_host).to receive(:[]).with('platform').and_return('Debian')
     allow(foss_host).to receive(:[]).with('pe_ver').and_return(nil)
+    allow(foss_host).to receive(:[]).with('roles').and_return(['agent'])
     allow(foss_host).to receive(:puppet).and_return('hiera_config' => '/dne')
     allow(pe_host).to receive(:[]).with('pe_ver').and_return('3.8.3')
     allow(pe_host).to receive(:[]).with('distmoduledir').and_return('/dne')
     allow(pe_host).to receive(:[]).with('platform').and_return('Debian')
+    allow(pe_host).to receive(:[]).with('roles').and_return(['agent'])
     allow(pe_host).to receive(:puppet).and_return('hiera_config' => '/dne')
     [foss_host, pe_host]
   end
@@ -21,6 +23,7 @@ describe 'Beaker::PuppetInstallHelper' do
     allow(subject).to receive(:options).and_return({})
     allow(subject).to receive(:on)
     allow(subject).to receive(:fact_on)
+    allow(subject).to receive(:agents).and_return(hosts)
   end
   after :each do
     ENV.delete('PUPPET_VERSION')
@@ -71,22 +74,56 @@ describe 'Beaker::PuppetInstallHelper' do
       end
     end
     context 'for foss' do
+      let :hosts do
+        foss_host = double(is_pe?: false)
+        foss_master = double(is_pe?: false)
+        allow(foss_host).to receive(:[]).with('distmoduledir').and_return('/dne')
+        allow(foss_host).to receive(:[]).with('platform').and_return('Debian')
+        allow(foss_host).to receive(:[]).with('pe_ver').and_return(nil)
+        allow(foss_host).to receive(:[]).with('roles').and_return(['agent'])
+        allow(foss_host).to receive(:puppet).and_return('hiera_config' => '/dne')
+        allow(foss_master).to receive(:[]).with('pe_ver').and_return(nil)
+        allow(foss_master).to receive(:[]=).with('distmoduledir', 'foo')
+        allow(foss_master).to receive(:[]).with('platform').and_return('Debian')
+        allow(foss_master).to receive(:[]).with('roles').and_return(['master'])
+        allow(foss_master).to receive(:get_ip).and_return('1.2.3.4')
+        allow(foss_master).to receive(:install_package).with('puppetserver')
+        allow(foss_master).to receive(:get_ip).and_return('1.2.3.4')
+        [foss_host, foss_master]
+      end
+      let :result do
+        Beaker::Result.new( nil, nil )
+      end
+      before :each do
+        allow(subject).to receive(:master).and_return(hosts[1])
+        allow(subject).to receive(:sign_certificate_for)
+        allow(subject).to receive(:puppet_agent)
+        allow(subject).to receive(:puppet).with('resource', 'service', 'puppetserver', 'ensure=running')
+        allow(subject).to receive(:puppet).with('resource', 'host', 'puppet', 'ensure=present', 'ip=1.2.3.4')
+        allow(subject).to receive(:puppet).with('agent', '--test')
+        allow(subject).to receive(:puppet).with('config', 'print', 'modulepath')
+        allow(subject).to receive(:on).and_return(result)
+        result.stdout = 'foo:bar'
+      end
       it 'uses foss explicitly' do
         ENV['PUPPET_INSTALL_TYPE'] = 'foss'
-        expect(subject).to receive(:install_puppet_on).with(hosts, version: nil, default_action: 'gem_install')
+        expect(subject).to receive(:install_puppetlabs_release_repo).with(hosts[1], 'pc1')
+        expect(subject).to receive(:install_puppet_on).with(hosts[0], version: nil, default_action: 'gem_install')
         subject.run_puppet_install_helper_on(hosts)
       end
       %w(PUPPET_VERSION PUPPET_INSTALL_VERSION).each do |version_var|
         it 'uses foss with a version' do
           ENV['PUPPET_INSTALL_TYPE'] = 'foss'
           ENV[version_var] = '3.8.1'
-          expect(subject).to receive(:install_puppet_on).with(hosts, version: '3.8.1', default_action: 'gem_install')
+          expect(subject).to receive(:install_puppetlabs_release_repo).with(hosts[1], 'pc1')
+          expect(subject).to receive(:install_puppet_on).with(hosts[0], version: '3.8.1', default_action: 'gem_install')
           subject.run_puppet_install_helper_on(hosts)
         end
         it 'uses foss with a >4 version detects AIO' do
           ENV['PUPPET_INSTALL_TYPE'] = 'foss'
           ENV[version_var] = '4.1.0'
-          expect(subject).to receive(:install_puppet_on).with(hosts, version: '4.1.0', default_action: 'gem_install')
+          expect(subject).to receive(:install_puppetlabs_release_repo).with(hosts[1], 'pc1')
+          expect(subject).to receive(:install_puppet_on).with(hosts[0], version: '4.1.0', default_action: 'gem_install')
           expect(subject).to receive(:add_aio_defaults_on).with(hosts)
           expect(subject).to receive(:add_puppet_paths_on).with(hosts)
           subject.run_puppet_install_helper_on(hosts)

@@ -51,8 +51,25 @@ module Beaker::PuppetInstallHelper
     when 'foss'
       opts = options.merge(version: version,
                            default_action: 'gem_install')
-
-      install_puppet_on(hosts, opts)
+      hosts.each do |host|
+        if hosts_with_role(hosts, 'master').length>0 then
+          next if host == master
+        end
+        install_puppet_on(host, opts)
+      end
+      if hosts_with_role(hosts, 'master').length>0 then
+        # install puppetserver
+        install_puppetlabs_release_repo( master, 'pc1' )
+        master.install_package('puppetserver')
+        on(master, puppet('resource', 'service', 'puppetserver', 'ensure=running'))
+        agents.each do |agent|
+          on(agent, puppet('resource', 'host', 'puppet', 'ensure=present', "ip=#{master.get_ip}"))
+          on(agent, puppet('agent', '--test'), :acceptable_exit_codes => [0,1])
+        end
+        master['distmoduledir'] = on(master, puppet('config', 'print', 'modulepath')).stdout.split(':')[0]
+        sign_certificate_for(agents)
+        run_agent_on(agents)
+      end
       # XXX install_puppet_on() will only add_aio_defaults_on when the nodeset
       # type == 'aio', but we don't want to depend on that.
       if opts[:version] && !version_is_less(opts[:version], '4.0.0')
@@ -60,6 +77,9 @@ module Beaker::PuppetInstallHelper
         add_puppet_paths_on(hosts)
       end
       Array(hosts).each do |host|
+        if hosts_with_role(hosts, 'master').length>0 then
+          next if host == master
+        end
         if fact_on(host, 'osfamily') != 'windows'
           on host, "mkdir -p #{host['distmoduledir']}"
           # XXX Maybe this can just be removed? What PE/puppet version needs

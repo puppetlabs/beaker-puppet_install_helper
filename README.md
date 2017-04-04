@@ -12,6 +12,7 @@ The way to use this is to declare either `run_puppet_install_helper()` or `run_p
 - `PUPPET_INSTALL_TYPE=foss` will read `PUPPET_INSTALL_VERSION` and:
   - if `PUPPET_INSTALL_VERSION` is less than 4 will attempt to install that version of the system package if available, or else the ruby gem of that version.
   - if `PUPPET_INSTALL_VERSION` is 4 or more it will attempt to install the corresponding puppet-agent package, or gem version otherwise.
+  - if a `master` role is defined, will install puppetserver on that node. Note that the corresponding puppet-agent dependency will be installed on that node rather than the specified `PUPPET_INSTALL_VERSION`.
 
 The best way is explicitly set `PUPPET_INSTALL_TYPE` and `PUPPET_INSTALL_VERSION` to what you want. It'll probably do what you expect.
 
