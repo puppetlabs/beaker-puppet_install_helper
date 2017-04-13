@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.7.1]
+### Fixed
+- Reverted adding the bin folder to $PATH on non-windows
+
 ## [0.7.0]
 ### Changed
 - MODULES-4653 `run_puppet_install_helper_on` now installs puppetserver on master role when using the `foss` install type.
@@ -39,6 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Add solaris for installing CA certs as well.
 
+[0.7.1]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.4.4...0.5.0
