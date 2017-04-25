@@ -9,9 +9,7 @@ The way to use this is to declare either `run_puppet_install_helper()` or `run_p
 - `PUPPET_INSTALL_TYPE` is unset: if `type: pe` is set for the default node in the nodeset, it will us the PE install method. Otherwise it will only install an agent.
 - `PUPPET_INSTALL_TYPE=pe` will read `PUPPET_INSTALL_VERSION` and attempt to install that version of the PE tarball. If no version is set, then it uses the latest stable build.
 - `PUPPET_INSTALL_TYPE=agent` will read `PUPPET_INSTALL_VERSION` and install that version of puppet-agent (eg, `PUPPET_INSTALL_TYPE=agent PUPPET_INSTALL_VERSION=1.0.0`)
-- `PUPPET_INSTALL_TYPE=foss` will read `PUPPET_INSTALL_VERSION` and:
-  - if `PUPPET_INSTALL_VERSION` is less than 4 will attempt to install that version of the system package if available, or else the ruby gem of that version.
-  - if `PUPPET_INSTALL_VERSION` is 4 or more it will attempt to install the corresponding puppet-agent package, or gem version otherwise.
+- `PUPPET_INSTALL_TYPE=foss` will read `PUPPET_INSTALL_VERSION` and pass that on to beaker's [install_puppet_on](http://www.rubydoc.info/github/puppetlabs/beaker/Beaker%2FDSL%2FInstallUtils%2FFOSSUtils%3Ainstall_puppet_on)
   - if a `master` role is defined, will install puppetserver on that node. Note that the corresponding puppet-agent dependency will be installed on that node rather than the specified `PUPPET_INSTALL_VERSION`.
 
 The best way is explicitly set `PUPPET_INSTALL_TYPE` and `PUPPET_INSTALL_VERSION` to what you want. It'll probably do what you expect.
