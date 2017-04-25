@@ -26,8 +26,7 @@ module Beaker::PuppetInstallHelper
     end
 
     # Example environment variables to be read:
-    # PUPPET_INSTALL_VERSION=3.8.1 <-- for foss/pe/gem
-    # PUPPET_INSTALL_VERSION=4.1.0 <-- for agent/gem
+    # PUPPET_INSTALL_VERSION=4.1.0 <-- for agent
     # PUPPET_INSTALL_VERSION=1.0.1 <-- for agent
     #
     # PUPPET_INSTALL_TYPE=pe
