@@ -38,13 +38,13 @@ describe 'Beaker::PuppetInstallHelper' do
       allow(subject).to receive(:default).and_return(hosts[0])
     end
     it 'calls run_puppet_install_helper_on on each host' do
-      expect(subject).to receive(:run_puppet_install_helper_on).with(hosts, 'agent', nil)
+      expect(subject).to receive(:run_puppet_install_helper_on).with(hosts, 'puppet5', nil)
       subject.run_puppet_install_helper
     end
     %w(PUPPET_VERSION PUPPET_INSTALL_VERSION).each do |version_var|
       it 'calls run_puppet_install_helper_on on each host with a version ' do
         ENV[version_var] = '4.1.0'
-        expect(subject).to receive(:run_puppet_install_helper_on).with(hosts, 'agent', '4.1.0')
+        expect(subject).to receive(:run_puppet_install_helper_on).with(hosts, 'puppet5', '4.1.0')
         subject.run_puppet_install_helper
       end
     end
@@ -55,7 +55,7 @@ describe 'Beaker::PuppetInstallHelper' do
         expect(subject).to receive(:default).and_return(hosts[0])
         expect(subject).to receive(:add_aio_defaults_on).with(hosts)
         expect(subject).to receive(:add_puppet_paths_on).with(hosts)
-        expect(subject).to receive(:install_puppet_agent_on).with(hosts, version: nil)
+        expect(subject).to receive(:install_puppet_agent_on).with(hosts, puppet_collection: 'puppet5', version: nil)
         subject.run_puppet_install_helper_on(hosts)
       end
       it 'windows 2003 node' do
@@ -155,16 +155,16 @@ describe 'Beaker::PuppetInstallHelper' do
     end
     context 'for puppet-agent' do
       it 'uses agent explicitly' do
-        ENV['PUPPET_INSTALL_TYPE'] = 'agent'
-        expect(subject).to receive(:install_puppet_agent_on).with(hosts, version: nil)
+        ENV['PUPPET_INSTALL_TYPE'] = 'puppet5'
+        expect(subject).to receive(:install_puppet_agent_on).with(hosts, puppet_collection: 'puppet5', version: nil)
         expect(subject).to receive(:add_aio_defaults_on).with(hosts)
         expect(subject).to receive(:add_puppet_paths_on).with(hosts)
         subject.run_puppet_install_helper_on(hosts)
       end
       it 'uses foss with a version' do
-        ENV['PUPPET_INSTALL_TYPE'] = 'agent'
-        ENV['PUPPET_INSTALL_VERSION'] = '1.1.0'
-        expect(subject).to receive(:install_puppet_agent_on).with(hosts, version: '1.1.0')
+        ENV['PUPPET_INSTALL_TYPE'] = 'puppet5'
+        ENV['PUPPET_INSTALL_VERSION'] = '5.5.0'
+        expect(subject).to receive(:install_puppet_agent_on).with(hosts, puppet_collection: "puppet5", version: '5.5.0')
         expect(subject).to receive(:add_aio_defaults_on).with(hosts)
         expect(subject).to receive(:add_puppet_paths_on).with(hosts)
         subject.run_puppet_install_helper_on(hosts)
@@ -172,18 +172,18 @@ describe 'Beaker::PuppetInstallHelper' do
     end
     context 'for puppet-agent development repo' do
       before :each do
-        ENV['PUPPET_INSTALL_TYPE'] = 'agent'
+        ENV['PUPPET_INSTALL_TYPE'] = 'puppet6-nightly'
         ENV['PUPPET_AGENT_SHA'] = 'abc123'
       end
       it 'uses a development repo' do
-        expect(subject).to receive(:install_puppet_agent_dev_repo_on).with(hosts, puppet_collection: 'PC1', puppet_agent_sha: 'abc123', puppet_agent_version: 'abc123')
+        expect(subject).to receive(:install_puppet_agent_dev_repo_on).with(hosts, puppet_collection: 'puppet6-nightly', puppet_agent_sha: 'abc123', puppet_agent_version: 'abc123')
         expect(subject).to receive(:add_aio_defaults_on).with(hosts)
         expect(subject).to receive(:add_puppet_paths_on).with(hosts)
         subject.run_puppet_install_helper_on(hosts)
       end
       it 'uses a development repo with suite version' do
         ENV['PUPPET_AGENT_SUITE_VERSION'] = '1.0.0.0.gabc123'
-        expect(subject).to receive(:install_puppet_agent_dev_repo_on).with(hosts, puppet_collection: 'PC1', puppet_agent_sha: 'abc123', puppet_agent_version: '1.0.0.0.gabc123')
+        expect(subject).to receive(:install_puppet_agent_dev_repo_on).with(hosts, puppet_collection: 'puppet6-nightly', puppet_agent_sha: 'abc123', puppet_agent_version: '1.0.0.0.gabc123')
         expect(subject).to receive(:add_aio_defaults_on).with(hosts)
         expect(subject).to receive(:add_puppet_paths_on).with(hosts)
         subject.run_puppet_install_helper_on(hosts)
