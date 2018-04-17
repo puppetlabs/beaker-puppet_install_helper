@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'beaker-puppet_install_helper'
-  s.version     = '0.7.1'
+  s.version     = '0.8.0'
   s.authors     = ['Puppetlabs']
   s.email       = ['hunter@puppet.com']
   s.homepage    = 'https://github.com/puppetlabs/beaker-puppet_install_helper'
