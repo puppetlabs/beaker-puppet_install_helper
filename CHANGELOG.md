@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.8.0]
+### Changed
+- Changed the default `PUPPET_INSTALL_TYPE` from "agent" (puppet 4) to "puppet5"
+
+### Added
+- Added puppet5 and puppet6-nightly ability.
+
 ## [0.7.1]
 ### Fixed
 - Reverted adding the bin folder to $PATH on non-windows
@@ -43,6 +50,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Add solaris for installing CA certs as well.
 
+[0.8.0]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.5.0...0.6.0
