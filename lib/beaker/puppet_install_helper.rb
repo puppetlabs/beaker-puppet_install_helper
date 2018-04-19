@@ -7,28 +7,21 @@ module Beaker::PuppetInstallHelper
   end
 
   # Takes a host(s) object, install type string, and install version string.
-  # - Type defaults to PE for PE nodes, and puppet5 agent otherwise.
-  # - Version will default to the latest 5x agent or pe package, depending on type
   def run_puppet_install_helper_on(hosts, type_arg = find_install_type, version = find_install_version)
     type = type_arg || find_install_type
 
     # Short circuit based on rspec-system and beaker variables
     if (ENV['RS_PROVISION'] == 'no') || (ENV['BEAKER_provision'] == 'no')
-      configure_defaults_on(hosts, type_arg)
+      configure_type_defaults_on(hosts)
       return
     end
 
     # Example environment variables to be read:
-    # PUPPET_INSTALL_VERSION=4.1.0 <-- for agent
-    # PUPPET_INSTALL_VERSION=1.0.1 <-- for agent
-    #
-    # PUPPET_INSTALL_TYPE=pe
-    # PUPPET_INSTALL_TYPE=foss
-    # PUPPET_INSTALL_TYPE=agent
-    # PUPPET_INSTALL_TYPE=nightly
-
-    # For PUPPET_INSTALL_TYPE=puppet6-nightly using a development version of Puppet Agent
-    # PUPPET_AGENT_SHA=0ed2bbc918326263da9d97d0361a9e9303b52938 <-- Long form commit SHA used to build the Puppet Agent
+    # BEAKER_PUPPET_COLLECTION=pc1 <-- for latest 4.x
+    # BEAKER_PUPPET_COLLECTION=puppet5 <-- for latest 5.x
+    # BEAKER_PUPPET_COLLECTION=puppet5 BEAKER_PUPPET_AGENT_VERSION=5.3.1 <-- for specific version
+    # BEAKER_PUPPET_COLLECTION=puppet6-nightly <-- for latest nightly build
+    # BEAKER_PUPPET_AGENT_SHA=0ed2bbc918326263da9d97d0361a9e9303b52938 <-- for specific dev build
 
     # Ensure windows 2003 is always set to 32 bit
     Array(hosts).each do |host|
@@ -47,9 +40,12 @@ module Beaker::PuppetInstallHelper
         if hosts_with_role(hosts, 'master').length>0 then
           next if host == master
         end
+        # XXX install_puppet_on() will call install_puppet_agent_on() if there
+        # is a :version option >= 4.x passed, but does foss by default.
         install_puppet_on(host, opts)
       end
       if hosts_with_role(hosts, 'master').length>0 then
+        # TODO Make the puppetserver code work with puppet5/puppet6
         # install puppetserver
         install_puppetlabs_release_repo( master, 'pc1' )
         master.install_package('puppetserver')
@@ -85,45 +81,39 @@ module Beaker::PuppetInstallHelper
           on host, "echo 'export PATH=/opt/puppet/bin:/var/ruby/1.8/gem_home/bin:${PATH}' >> ~/.bashrc"
         end
       end
-    when 'agent', 'agent4', 'puppet4'
-      install_agent_on(hosts, 'pc1', version)
-    when 'agent5', 'puppet5'
-      install_agent_on(hosts, 'puppet5', version)
-    when /^puppet\d-nightly$/ # Just 'puppet-nightly' doesn't work: https://github.com/puppetlabs/beaker-puppet/blob/63ea32a0d7caa8f261c533b020625de19569f971/lib/beaker-puppet/install_utils/foss_utils.rb#L944
-      install_agent_on(hosts, type, version)
+    when 'agent'
+      if find_agent_sha.nil?
+        install_puppet_agent_on(hosts, options.merge(version: version))
+      else
+        opts = options.merge(puppet_agent_sha: find_agent_sha,
+                             puppet_agent_version: ENV['PUPPET_AGENT_SUITE_VERSION'] || find_agent_sha)
+        install_puppet_agent_dev_repo_on(hosts, opts)
+      end
+
+      # XXX install_puppet_agent_on() will only add_aio_defaults_on when the
+      # nodeset type == 'aio', but we don't want to depend on that.
+      add_aio_defaults_on(hosts)
+      add_puppet_paths_on(hosts)
     else
-      raise ArgumentError, "Type must be pe, puppet4, puppet5, or puppet6-nightly; got #{type.inspect}"
+      raise ArgumentError, "Type must be pe, foss, or agent; got #{type.inspect}"
     end
   end
 
   def find_install_type
+    # XXX Just use default.is_pe? when PUPPET_INSTALL_TYPE=foss is removed.
     ENV['PUPPET_INSTALL_TYPE'] || if default.is_pe?
                                     'pe'
                                   else
-                                    'puppet5'
+                                    'agent'
                                   end
   end
 
-  def find_install_version
-    ENV['PUPPET_INSTALL_VERSION'] || ENV['PUPPET_VERSION']
+  def find_agent_sha
+    ENV['BEAKER_PUPPET_AGENT_SHA'] || ENV['PUPPET_AGENT_SHA']
   end
 
-  def install_agent_on(hosts, collection, version)
-    if ENV['PUPPET_AGENT_SHA'].nil?
-      opts = options.merge(puppet_collection: collection,
-                           version: version)
-      install_puppet_agent_on(hosts, opts)
-    else
-      opts = options.merge(puppet_collection: collection,
-                           puppet_agent_sha: ENV['PUPPET_AGENT_SHA'],
-                           puppet_agent_version: ENV['PUPPET_AGENT_SUITE_VERSION'] || ENV['PUPPET_AGENT_SHA'])
-      install_puppet_agent_dev_repo_on(hosts, opts)
-    end
-
-    # XXX install_puppet_agent_on() will only add_aio_defaults_on when the
-    # nodeset type == 'aio', but we don't want to depend on that.
-    add_aio_defaults_on(hosts)
-    add_puppet_paths_on(hosts)
+  def find_install_version
+    ENV['BEAKER_PUPPET_AGENT_VERSION'] || ENV['PUPPET_INSTALL_VERSION'] || ENV['PUPPET_VERSION']
   end
 end
 
