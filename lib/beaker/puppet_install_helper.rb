@@ -31,7 +31,8 @@ module Beaker::PuppetInstallHelper
     case type
     when 'pe'
       # These will skip hosts that are not supported
-      install_pe_on(Array(hosts), options.merge('pe_ver' => version))
+      install_pe_on(Array(hosts), options.merge('pe_ver' => ENV['BEAKER_PE_VER'],
+                                                'puppet_agent_version' => version))
       install_ca_certs_on(Array(hosts))
     when 'foss'
       opts = options.merge(version: version,

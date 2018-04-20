@@ -9,6 +9,7 @@ The way to use this is to declare either `run_puppet_install_helper()` or `run_p
 - `BEAKER_PUPPET_COLLECTION=<puppet collection>` will install the specified `BEAKER_PUPPET_AGENT_VERSION` from the specified collection. Valid values are `pc1`, `puppet5`, `puppet6-nightly` etc. This may change with time.
 - `BEAKER_PUPPET_AGENT_VERSION=<version>` to specify
 - `BEAKER_IS_PE=<yes or no>` may be used to force a nodeset to be PE or not, regardless of the nodeset `type` or absence thereof.
+- `BEAKER_PE_VER=<pe version>` may be used to specify the PE version for masters. Eg: `BEAKER_PE_VER=2017.3.5`
 - `BEAKER_PUPPET_AGENT_SHA=<sha>` may be used in order to use a development puppet-agent package.
 - `PUPPET_INSTALL_TYPE=foss` may be used to install foss puppet 3.x, but is deprecated and should not be used.
 

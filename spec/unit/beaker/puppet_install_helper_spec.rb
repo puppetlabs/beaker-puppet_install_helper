@@ -36,6 +36,7 @@ describe 'Beaker::PuppetInstallHelper' do
     ENV.delete('BEAKER_PUPPET_COLLECTION')
     ENV.delete('BEAKER_PUPPET_AGENT_VERSION')
     ENV.delete('BEAKER_PUPPET_AGENT_SHA')
+    ENV.delete('BEAKER_PE_VER')
   end
   describe '#run_puppet_install_helper' do
     before :each do
@@ -66,14 +67,14 @@ describe 'Beaker::PuppetInstallHelper' do
         w2k3 = { 'platform' => 'windows-2003r2-64', 'distmoduledir' => '/dne', 'hieraconf' => '/dne' }
         win_hosts = [w2k3]
         expect(subject).to receive(:default).and_return(double(is_pe?: true))
-        expect(subject).to receive(:install_pe_on).with([w2k3.merge('install_32' => true)], 'pe_ver' => nil)
+        expect(subject).to receive(:install_pe_on).with([w2k3.merge('install_32' => true)], 'pe_ver' => nil, 'puppet_agent_version' => nil)
         expect(subject).to receive(:create_cert_on_host).exactly(3).times
         expect(subject).to receive(:add_windows_cert).exactly(3).times
         subject.run_puppet_install_helper_on(win_hosts)
       end
       it 'uses PE by default for PE nodes' do
         expect(subject).to receive(:default).and_return(hosts[1])
-        expect(subject).to receive(:install_pe_on).with(hosts, 'pe_ver' => nil)
+        expect(subject).to receive(:install_pe_on).with(hosts, 'pe_ver' => nil, 'puppet_agent_version' => nil)
         subject.run_puppet_install_helper_on(hosts)
       end
     end
@@ -193,26 +194,35 @@ describe 'Beaker::PuppetInstallHelper' do
     context 'for PE' do
       it 'uses PE when default is a pe host' do
         expect(subject).to receive(:default).and_return(hosts[1])
-        expect(subject).to receive(:install_pe_on).with(hosts, 'pe_ver' => nil)
+        expect(subject).to receive(:install_pe_on).with(hosts, 'pe_ver' => nil, 'puppet_agent_version' => nil)
         subject.run_puppet_install_helper_on(hosts)
       end
       it 'uses PE explicitly' do
         ENV['PUPPET_INSTALL_TYPE'] = 'pe'
-        expect(subject).to receive(:install_pe_on).with(hosts, 'pe_ver' => nil)
+        expect(subject).to receive(:install_pe_on).with(hosts, 'pe_ver' => nil, 'puppet_agent_version' => nil)
         subject.run_puppet_install_helper_on(hosts)
       end
       it 'uses PE with a version' do
         ENV['PUPPET_INSTALL_TYPE'] = 'pe'
-        ENV['PUPPET_INSTALL_VERSION'] = '3.8.1'
-        expect(subject).to receive(:install_pe_on).with(hosts, 'pe_ver' => '3.8.1')
+        ENV['BEAKER_PE_VER'] = '3.8.1'
+        expect(subject).to receive(:install_pe_on).with(hosts, 'pe_ver' => '3.8.1', 'puppet_agent_version' => nil)
+        subject.run_puppet_install_helper_on(hosts)
+      end
+      it 'uses PE with an agent version' do
+        ENV['PUPPET_INSTALL_TYPE'] = 'pe'
+        ENV['PUPPET_INSTALL_VERSION'] = '2017.3.5'
+        ENV['BEAKER_IS_PE'] = 'yes'
+        ENV['BEAKER_PE_VER'] = '2017.3.5'
+        ENV['BEAKER_PUPPET_AGENT_VERSION'] = '5.3.5'
+        expect(subject).to receive(:install_pe_on).with(hosts, 'pe_ver' => '2017.3.5', 'puppet_agent_version' => '5.3.5')
         subject.run_puppet_install_helper_on(hosts)
       end
       it 'installs certs on PE 3 solaris' do
         sol = { 'pe_ver' => '3.8.3', 'platform' => 'solaris-11-64', 'distmoduledir' => '/dne', 'hieraconf' => '/dne' }
         hosts = [sol]
         ENV['PUPPET_INSTALL_TYPE'] = 'pe'
-        ENV['PUPPET_INSTALL_VERSION'] = '3.8.1'
-        expect(subject).to receive(:install_pe_on).with(hosts, 'pe_ver' => '3.8.1')
+        ENV['BEAKER_PE_VER'] = '3.8.1'
+        expect(subject).to receive(:install_pe_on).with(hosts, 'pe_ver' => '3.8.1', 'puppet_agent_version' => nil)
         expect(subject).to receive(:create_cert_on_host).exactly(3).times
         expect(subject).to receive(:add_solaris_cert).exactly(3).times
         subject.run_puppet_install_helper_on(hosts)
