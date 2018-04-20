@@ -4,22 +4,15 @@ This gem is simply an abstraction for the various ways that we install puppet fr
 
 ### `run_puppet_install_helper`
 
-The way to use this is to declare either `run_puppet_install_helper()` or `run_puppet_install_helper_on(hosts)` and set environment variables `PUPPET_INSTALL_VERSION` and/or `PUPPET_INSTALL_TYPE` in the following combinations to have puppet installed on the desired hosts:
+The way to use this is to declare either `run_puppet_install_helper()` or `run_puppet_install_helper_on(hosts)` and set environment variables `BEAKER_PUPPET_AGENT_VERSION` and/or `BEAKER_PUPPET_COLLECTION` in the following combinations to have puppet installed on the desired hosts. The nodeset should be configured with `type: pe` or `type: aio` to control the type of install.
 
-- `PUPPET_INSTALL_TYPE` is unset: if `type: pe` is set for the default node in the nodeset, it will us the PE install method. Otherwise it will only install an agent.
-- `PUPPET_INSTALL_TYPE=pe` will read `PUPPET_INSTALL_VERSION` and attempt to install that version of the PE tarball. If no version is set, then it uses the latest stable build.
-- `PUPPET_INSTALL_TYPE=agent` will read `PUPPET_INSTALL_VERSION` and install that version of puppet-agent (eg, `PUPPET_INSTALL_TYPE=agent PUPPET_INSTALL_VERSION=1.0.0`)
-- `PUPPET_INSTALL_TYPE=foss` will read `PUPPET_INSTALL_VERSION` and pass that on to beaker's [install_puppet_on](http://www.rubydoc.info/github/puppetlabs/beaker/Beaker%2FDSL%2FInstallUtils%2FFOSSUtils%3Ainstall_puppet_on)
-  - if a `master` role is defined, will install puppetserver on that node. Note that the corresponding puppet-agent dependency will be installed on that node rather than the specified `PUPPET_INSTALL_VERSION`.
+- `BEAKER_PUPPET_COLLECTION=<puppet collection>` will install the specified `BEAKER_PUPPET_AGENT_VERSION` from the specified collection. Valid values are `pc1`, `puppet5`, `puppet6-nightly` etc. This may change with time.
+- `BEAKER_PUPPET_AGENT_VERSION=<version>` to specify
+- `BEAKER_IS_PE=<yes or no>` may be used to force a nodeset to be PE or not, regardless of the nodeset `type` or absence thereof.
+- `BEAKER_PUPPET_AGENT_SHA=<sha>` may be used in order to use a development puppet-agent package.
+- `PUPPET_INSTALL_TYPE=foss` may be used to install foss puppet 3.x, but is deprecated and should not be used.
 
-The best way is explicitly set `PUPPET_INSTALL_TYPE` and `PUPPET_INSTALL_VERSION` to what you want. It'll probably do what you expect.
-
-#### Installing a puppet-agent package from a development repository
-
-In order to use a custom, or unreleased, puppet-agent package set the following environment variables"
-- `PUPPET_INSTALL_TYPE=agent`
-- `PUPPET_AGENT_SHA` is the longform commit SHA used when building the puppet-agent package, for example `PUPPET_AGENT_SHA=18d31fd5ed41abb276398201f84a4347e0fc7092`.  This is required to be set in order to use a development puppet-agent package
-- `PUPPET_AGENT_SUITE_VERSION` is the version of the puppet-agent package, for example `PUPPET_AGENT_SUITE_VERSION="1.8.2.350.g18d31fd`.  This is optional, and will default to `PUPPET_AGENT_SHA` if not set
+The best way is explicitly set `BEAKER_PUPPET_COLLECTION` and `BEAKER_PUPPET_AGENT_VERSION` to what you want. It'll probably do what you expect.
 
 ### `install_ca_certs`
 

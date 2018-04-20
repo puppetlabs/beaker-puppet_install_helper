@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.9.0]
+### Changed
+- Use `BEAKER_IS_PE` instead of `PUPPET_INSTALL_TYPE` to specify whether a run should be PE or agent.
+- Use `BEAKER_PUPPET_COLLECTION` instead of `PUPPET_INSTALL_TYPE` to specify puppet5, puppet6-nightly, etc. collections.
+- Use `BEAKER_PUPPET_AGENT_VERSION` instead of `PUPPET_INSTALL_VERSION`
+- Use `BEAKER_PUPPET_AGENT_SHA` instead of `PUPPET_AGENT_SHA`
+
+### Fixed
+- Beaker only cares about the SHA and no longer cares about `PUPPET_AGENT_SUITE_VERSION` so deprecating that variable. See (the beaker source)[https://github.com/puppetlabs/beaker-puppet/blob/63ea32a0d7caa8f261c533b020625de19569f971/lib/beaker-puppet/install_utils/foss_utils.rb#L1150-L1152]
+
 ## [0.8.0]
 ### Changed
 - Changed the default `PUPPET_INSTALL_TYPE` from "agent" (puppet 4) to "puppet5"
