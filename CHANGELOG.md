@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.9.1]
+### Fixed
+- Pass `BEAKER_PE_VER` to `install_pe_on()` for the PE version rather than `BEAKER_PUPPET_AGENT_VERSION` or `PUPPET_INSTALL_VERSION`
+- Pass `BEAKER_PUPPET_AGENT_VERSION` to `install_pe_on()` as the agent version to be installed alongside PE.
+
 ## [0.9.0]
 ### Changed
 - Use `BEAKER_IS_PE` instead of `PUPPET_INSTALL_TYPE` to specify whether a run should be PE or agent.
@@ -14,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Beaker only cares about the SHA and no longer cares about `PUPPET_AGENT_SUITE_VERSION` so deprecating that variable. See (the beaker source)[https://github.com/puppetlabs/beaker-puppet/blob/63ea32a0d7caa8f261c533b020625de19569f971/lib/beaker-puppet/install_utils/foss_utils.rb#L1150-L1152]
 
-## [0.8.0]
+## [0.8.0] - Yanked
 ### Changed
 - Changed the default `PUPPET_INSTALL_TYPE` from "agent" (puppet 4) to "puppet5"
 
@@ -60,6 +65,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Add solaris for installing CA certs as well.
 
+[0.9.1]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.9.0...0.9.1
+[0.9.0]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.6.0...0.7.0
