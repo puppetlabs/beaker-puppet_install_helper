@@ -84,6 +84,8 @@ module Beaker::PuppetInstallHelper
       end
     when 'agent'
       if find_agent_sha.nil?
+        # Workaround for RE-10734
+        options[:release_apt_repo_url] = "http://apt.puppetlabs.com/#{ENV['BEAKER_PUPPET_COLLECTION']}" if ENV['BEAKER_PUPPET_COLLECTION'] =~ /-nightly$/
         install_puppet_agent_on(hosts, options.merge(version: version))
       else
         opts = options.merge(puppet_agent_sha: find_agent_sha,
