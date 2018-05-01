@@ -166,7 +166,12 @@ describe 'Beaker::PuppetInstallHelper' do
             it "installs puppet-agent from #{collection} repo" do
               ENV['BEAKER_PUPPET_COLLECTION'] = collection
               if collection =~ /-nightly$/
-                expect(subject).to receive(:install_puppet_agent_on).with(hosts, release_apt_repo_url: "http://apt.puppetlabs.com/puppet6-nightly", version: nil)
+                expect(subject).to receive(:install_puppet_agent_on).with(
+                  hosts,
+                  release_apt_repo_url: "http://apt.puppetlabs.com/puppet6-nightly",
+                  win_download_url: "http://nightlies.puppet.com/downloads/windows",
+                  mac_download_url: "http://nightlies.puppet.com/downloads/mac",
+                  version: nil)
               else
                 expect(subject).to receive(:install_puppet_agent_on).with(hosts, version: nil)
               end
