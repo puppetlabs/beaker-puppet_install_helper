@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.9.3]
+### Fixed
+- Windows needs to use nightlies.puppet.com for nightly builds because the nightlies are not published to downloads.puppet.com
+
 ## [0.9.2]
 ### Fixed
 - Fix debian nightly collection installation.
@@ -69,6 +73,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Add solaris for installing CA certs as well.
 
+[0.9.3]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.9.2...0.9.3
 [0.9.2]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.9.1...0.9.2
 [0.9.1]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.9.0...0.9.1
 [0.9.0]: https://github.com/puppetlabs/beaker-puppet_install_helper/compare/0.8.0...0.9.0
