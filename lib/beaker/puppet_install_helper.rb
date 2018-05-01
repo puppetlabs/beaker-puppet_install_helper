@@ -83,9 +83,13 @@ module Beaker::PuppetInstallHelper
         end
       end
     when 'agent'
-      if find_agent_sha.nil?
+      if ENV['BEAKER_PUPPET_COLLECTION'] =~ /-nightly$/
         # Workaround for RE-10734
-        options[:release_apt_repo_url] = "http://apt.puppetlabs.com/#{ENV['BEAKER_PUPPET_COLLECTION']}" if ENV['BEAKER_PUPPET_COLLECTION'] =~ /-nightly$/
+        options[:release_apt_repo_url] = "http://apt.puppetlabs.com/#{ENV['BEAKER_PUPPET_COLLECTION']}"
+        options[:win_download_url] = 'http://nightlies.puppet.com/downloads/windows'
+        options[:mac_download_url] = 'http://nightlies.puppet.com/downloads/mac'
+      end
+      if find_agent_sha.nil?
         install_puppet_agent_on(hosts, options.merge(version: version))
       else
         opts = options.merge(puppet_agent_sha: find_agent_sha,
