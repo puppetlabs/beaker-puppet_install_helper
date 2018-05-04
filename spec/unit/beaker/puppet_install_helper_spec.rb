@@ -182,17 +182,21 @@ describe 'Beaker::PuppetInstallHelper' do
           end
         end
         context 'with a specific development sha' do
+          let (:sha) { '0ed2bbc918326263da9d97d0361a9e9303b52938' }
+          let (:dev_builds_url) { 'http://builds.delivery.puppetlabs.net' }
+          let (:agent_url) { "#{dev_builds_url}/puppet-agent/#{sha}/artifacts/#{sha}.yaml" }
+
           it 'uses a development repo' do
-            ENV['BEAKER_PUPPET_AGENT_SHA'] = '0ed2bbc918326263da9d97d0361a9e9303b52938'
-            expect(subject).to receive(:install_puppet_agent_dev_repo_on).with(hosts, puppet_agent_sha: '0ed2bbc918326263da9d97d0361a9e9303b52938', puppet_agent_version: '0ed2bbc918326263da9d97d0361a9e9303b52938')
+            ENV['BEAKER_PUPPET_AGENT_SHA'] = sha
+            allow(subject).to receive(:install_from_build_data_url).with('puppet-agent', agent_url, hosts).and_return true
             expect(subject).to receive(:add_aio_defaults_on).with(hosts)
             expect(subject).to receive(:add_puppet_paths_on).with(hosts)
             subject.run_puppet_install_helper_on(hosts)
           end
           it 'uses a development repo with suite version and sha' do
-            ENV['BEAKER_PUPPET_AGENT_SHA'] = '0ed2bbc918326263da9d97d0361a9e9303b52938'
+            ENV['BEAKER_PUPPET_AGENT_SHA'] = sha
             ENV['PUPPET_AGENT_SUITE_VERSION'] = '5.5.0.152.g0ed2bbc'
-            expect(subject).to receive(:install_puppet_agent_dev_repo_on).with(hosts, puppet_agent_sha: '0ed2bbc918326263da9d97d0361a9e9303b52938', puppet_agent_version: '5.5.0.152.g0ed2bbc')
+            allow(subject).to receive(:install_from_build_data_url).with('puppet-agent', agent_url, hosts).and_return true
             expect(subject).to receive(:add_aio_defaults_on).with(hosts)
             expect(subject).to receive(:add_puppet_paths_on).with(hosts)
             subject.run_puppet_install_helper_on(hosts)

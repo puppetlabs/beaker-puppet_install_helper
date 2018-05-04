@@ -89,12 +89,14 @@ module Beaker::PuppetInstallHelper
         options[:win_download_url] = 'http://nightlies.puppet.com/downloads/windows'
         options[:mac_download_url] = 'http://nightlies.puppet.com/downloads/mac'
       end
-      if find_agent_sha.nil?
+
+      agent_sha = find_agent_sha
+      if agent_sha.nil?
         install_puppet_agent_on(hosts, options.merge(version: version))
       else
-        opts = options.merge(puppet_agent_sha: find_agent_sha,
-                             puppet_agent_version: ENV['PUPPET_AGENT_SUITE_VERSION'] || find_agent_sha)
-        install_puppet_agent_dev_repo_on(hosts, opts)
+        # If we have a development sha, assume we're testing internally
+        dev_builds_url = ENV['DEV_BUILDS_URL'] || 'http://builds.delivery.puppetlabs.net'
+        install_from_build_data_url('puppet-agent', "#{dev_builds_url}/puppet-agent/#{agent_sha}/artifacts/#{agent_sha}.yaml", hosts)
       end
 
       # XXX install_puppet_agent_on() will only add_aio_defaults_on when the
