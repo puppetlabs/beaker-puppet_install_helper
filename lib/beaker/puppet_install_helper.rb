@@ -91,7 +91,7 @@ module Beaker::PuppetInstallHelper
       end
 
       agent_sha = find_agent_sha
-      if agent_sha.nil?
+      if agent_sha.nil? || agent_sha.empty?
         install_puppet_agent_on(hosts, options.merge(version: version))
       else
         # If we have a development sha, assume we're testing internally
