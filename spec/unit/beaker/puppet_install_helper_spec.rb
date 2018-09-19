@@ -103,6 +103,7 @@ describe 'Beaker::PuppetInstallHelper' do
         before :each do
           allow(subject).to receive(:master).and_return(hosts[1])
           allow(subject).to receive(:sign_certificate_for)
+          allow(subject).to receive(:run_agent_on)
           allow(subject).to receive(:puppet_agent)
           allow(subject).to receive(:puppet).with('resource', 'service', 'puppetserver', 'ensure=running')
           allow(subject).to receive(:puppet).with('resource', 'host', 'puppet', 'ensure=present', 'ip=1.2.3.4')
