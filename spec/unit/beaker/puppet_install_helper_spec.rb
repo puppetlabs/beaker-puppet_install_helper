@@ -161,7 +161,7 @@ describe 'Beaker::PuppetInstallHelper' do
             subject.run_puppet_install_helper_on(hosts)
           end
         end
-        ['puppet5', 'puppet6-nightly'].each do |collection|
+        ['puppet5', 'puppet6-nightly', 'puppet6'].each do |collection|
           context "with #{collection} collection" do
             it "installs puppet-agent from #{collection} repo" do
               ENV['BEAKER_PUPPET_COLLECTION'] = collection

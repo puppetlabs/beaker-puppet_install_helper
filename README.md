@@ -6,7 +6,7 @@ This gem is simply an abstraction for the various ways that we install puppet fr
 
 The way to use this is to declare either `run_puppet_install_helper()` or `run_puppet_install_helper_on(hosts)` and set environment variables `BEAKER_PUPPET_AGENT_VERSION` and/or `BEAKER_PUPPET_COLLECTION` in the following combinations to have puppet installed on the desired hosts. The nodeset should be configured with `type: pe` or `type: aio` to control the type of install.
 
-- `BEAKER_PUPPET_COLLECTION=<puppet collection>` will install the specified `BEAKER_PUPPET_AGENT_VERSION` from the specified collection. Valid values are `pc1`, `puppet5`, `puppet6-nightly` etc. This may change with time.
+- `BEAKER_PUPPET_COLLECTION=<puppet collection>` will install the specified `BEAKER_PUPPET_AGENT_VERSION` from the specified collection. Valid values are `pc1`, `puppet5`, `puppet6`, `puppet6-nightly` etc. This may change with time.
 - `BEAKER_PUPPET_AGENT_VERSION=<version>` to specify
 - `BEAKER_IS_PE=<yes or no>` may be used to force a nodeset to be PE or not, regardless of the nodeset `type` or absence thereof.
 - `BEAKER_PE_VER=<pe version>` may be used to specify the PE version for masters. Eg: `BEAKER_PE_VER=2017.3.5`
