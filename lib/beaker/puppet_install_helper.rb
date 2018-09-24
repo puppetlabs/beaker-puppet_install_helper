@@ -1,5 +1,5 @@
 require 'beaker'
-require 'beaker-puppet'
+require 'beaker-pe'
 require 'beaker/ca_cert_helper'
 
 module Beaker::PuppetInstallHelper
