@@ -103,6 +103,7 @@ describe 'Beaker::PuppetInstallHelper' do
         before :each do
           allow(subject).to receive(:master).and_return(hosts[1])
           allow(subject).to receive(:sign_certificate_for)
+          allow(subject).to receive(:run_agent_on)
           allow(subject).to receive(:puppet_agent)
           allow(subject).to receive(:puppet).with('resource', 'service', 'puppetserver', 'ensure=running')
           allow(subject).to receive(:puppet).with('resource', 'host', 'puppet', 'ensure=present', 'ip=1.2.3.4')
@@ -161,7 +162,7 @@ describe 'Beaker::PuppetInstallHelper' do
             subject.run_puppet_install_helper_on(hosts)
           end
         end
-        ['puppet5', 'puppet6-nightly'].each do |collection|
+        ['puppet5', 'puppet6-nightly', 'puppet6'].each do |collection|
           context "with #{collection} collection" do
             it "installs puppet-agent from #{collection} repo" do
               ENV['BEAKER_PUPPET_COLLECTION'] = collection

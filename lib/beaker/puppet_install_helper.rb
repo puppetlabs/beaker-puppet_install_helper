@@ -1,4 +1,5 @@
 require 'beaker'
+require 'beaker-puppet'
 require 'beaker/ca_cert_helper'
 
 module Beaker::PuppetInstallHelper
@@ -20,7 +21,8 @@ module Beaker::PuppetInstallHelper
     # BEAKER_PUPPET_COLLECTION=pc1 <-- for latest 4.x
     # BEAKER_PUPPET_COLLECTION=puppet5 <-- for latest 5.x
     # BEAKER_PUPPET_COLLECTION=puppet5 BEAKER_PUPPET_AGENT_VERSION=5.3.1 <-- for specific version
-    # BEAKER_PUPPET_COLLECTION=puppet6-nightly <-- for latest nightly build
+    # BEAKER_PUPPET_COLLECTION=puppet6 <-- for latest 6.x
+    # BEAKER_PUPPET_COLLECTION=puppet-nightly <-- for latest nightly build
     # BEAKER_PUPPET_AGENT_SHA=0ed2bbc918326263da9d97d0361a9e9303b52938 <-- for specific dev build
 
     # Ensure windows 2003 is always set to 32 bit
