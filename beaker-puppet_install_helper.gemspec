@@ -17,6 +17,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec'
 
   # Run time dependencies
-  s.add_runtime_dependency 'beaker', '>= 4.0'
-  s.add_runtime_dependency 'beaker-puppet', '>= 1.6.0'
+  s.add_runtime_dependency 'beaker', '~> 4.0'
+  s.add_runtime_dependency 'beaker-pe', '~> 2.0'
 end
