@@ -1,6 +1,10 @@
+# -*- encoding: utf-8 -*-
+$LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
+require 'beaker-puppet_install_helper/version'
+
 Gem::Specification.new do |s|
   s.name        = 'beaker-puppet_install_helper'
-  s.version     = '0.9.4'
+  s.version     = Beaker::PuppetInstallHelper::VERSION
   s.authors     = ['Puppetlabs']
   s.email       = ['hunter@puppet.com']
   s.homepage    = 'https://github.com/puppetlabs/beaker-puppet_install_helper'
